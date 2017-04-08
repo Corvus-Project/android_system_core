@@ -110,6 +110,8 @@ struct PropertyAuditData {
     const char* name;
 };
 
+static bool weaken_prop_override_security = false;
+
 static int PropertyAuditCallback(void* data, security_class_t /*cls*/, char* buf, size_t len) {
     auto* d = reinterpret_cast<PropertyAuditData*>(data);
 
@@ -926,6 +928,9 @@ void PropertyLoadBootDefaults() {
 
     property_initialize_ro_product_props();
     property_derive_build_fingerprint();
+
+    // Restore the normal property override security after init extension is executed
+    weaken_prop_override_security = false;
 
     if (android::base::GetBoolProperty("ro.persistent_properties.ready", false)) {
         update_sys_usb_config();
